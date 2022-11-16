@@ -7,8 +7,8 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 import { TokenInterceptor } from './token.interceptor';
-import { CgEdgeConfigService } from './cg-edge-config.service';
-import { MqttCloudConnectorComponent } from './mqtt-cloud-connector/mqtt-cloud-connector.component';
+import { CgEdgeConfigService } from './services/cg-edge-config.service';
+import { ConfigurationComponent } from './components/configuration/configuration.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
@@ -16,7 +16,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatCardModule} from '@angular/material/card';
-import { MessagePopupComponent } from './message-popup/message-popup.component';
+import { MessagePopupComponent } from './popups/message-popup/message-popup.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTabsModule} from '@angular/material/tabs';
@@ -25,7 +25,7 @@ import {MatListModule} from '@angular/material/list';
 import {MatSelectModule} from '@angular/material/select';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
-import { WaitPopupComponent } from './wait-popup/wait-popup.component';
+import { WaitPopupComponent } from './popups/wait-popup/wait-popup.component';
 
 
 
@@ -33,7 +33,7 @@ import { WaitPopupComponent } from './wait-popup/wait-popup.component';
 @NgModule({
   declarations: [
     AppComponent,
-    MqttCloudConnectorComponent,
+    ConfigurationComponent,
     MessagePopupComponent,
     WaitPopupComponent,
 

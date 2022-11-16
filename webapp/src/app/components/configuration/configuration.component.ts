@@ -1,15 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { CgEdgeConfigService, MccConfig } from '../cg-edge-config.service';
+import { CgEdgeConfigService, MccConfig } from '../../services/cg-edge-config.service';
 import {MatDialog} from '@angular/material/dialog';
-import { MessagePopupComponent} from '../message-popup/message-popup.component';
+import { MessagePopupComponent} from '../../popups/message-popup/message-popup.component';
 import { saveAs } from "file-saver";
 
 @Component({
-  selector: 'app-mqtt-cloud-connector',
-  templateUrl: './mqtt-cloud-connector.component.html',
-  styleUrls: ['./mqtt-cloud-connector.component.css']
+  selector: 'app-configuration',
+  templateUrl: './configuration.component.html',
+  styleUrls: ['./configuration.component.css']
 })
-export class MqttCloudConnectorComponent implements OnInit {
+export class ConfigurationComponent implements OnInit {
 
   appName!: string;
   newTopic!: string;

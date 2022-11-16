@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuardService } from './auth-guard.service';
-import { MqttCloudConnectorComponent } from './mqtt-cloud-connector/mqtt-cloud-connector.component';
+import { AuthGuardService } from './services/auth-guard.service';
+import { ConfigurationComponent } from './components/configuration/configuration.component';
 
 
 
@@ -10,7 +10,7 @@ import { MqttCloudConnectorComponent } from './mqtt-cloud-connector/mqtt-cloud-c
 const routes: Routes = [
 
   { path: '', redirectTo: 'mqtt-pubsub', pathMatch: 'full' },
-  { path: 'mqtt-pubsub', component: MqttCloudConnectorComponent},
+  { path: 'mqtt-pubsub', component: ConfigurationComponent},
   { path: '**', redirectTo: 'mqtt-pubsub'},
  
 

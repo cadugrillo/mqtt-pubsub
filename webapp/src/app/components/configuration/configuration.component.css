@@ -37,7 +37,7 @@ section {
 }
 
 
-.ClientSub, .ClientPub, .Logs {
+.ClientSub, .ClientPub, .Logs, .Tls {
   display: flex;
   flex-direction: column;
   text-align: left;
@@ -58,7 +58,7 @@ input {
 .clients {
   display: inline-grid;
   margin-top: 32px;
-  grid-template-columns: 410px 410px 420px;
+  grid-template-columns: 350px 640px 350px;
 }
 
 
@@ -97,10 +97,14 @@ input {
   width: 700px;
 }
 
-.example-button-row{
-  margin-left: 20px;
-}
-
 .mat-button-base {
   margin-right: 15px;
+}
+
+.inner-section {
+  display: table;
+}
+
+.TopSub {
+  width: 200px;
 }
