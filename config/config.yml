@@ -20,7 +20,7 @@ clientSub:
 
 clientPub:
   clientId: "cgedgedebug"
-  serverAddress: "tcp://test.mosquitto.org:1883"
+  serverAddress: "tcp://172.24.50.102:1883"
   qos: 1
   connectionTimeout: 1
   writeTimeout: 1
@@ -37,7 +37,7 @@ clientPub:
   privateKey: "-----BEGIN RSA PRIVATE KEY-----\nPRIVATEKEY\n-----END RSA PRIVATE KEY-----"
   insecureSkipVerify: true
   translateTopic: false
-  publishInterval: 250
+  publishInterval: 50
 
 #LOGS
 logs:
@@ -50,7 +50,7 @@ logs:
 #TOPICS TO SUBSCRIBE TO
 topicsSub:
   topic:
-    - "cgedge-mosquitto/#"
+    - "cg-connector/#"
 
 #TOPICS TO PUBLISH TO
 topicsPub:
