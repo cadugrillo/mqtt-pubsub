@@ -155,6 +155,10 @@ func Run() {
 
 	ConfigFile = yaml_parser.LoadConfig()
 
+	if ConfigFile.ClientPub.PublishInterval < 50 {
+		ConfigFile.ClientPub.PublishInterval = 50
+	}
+
 	//logs
 	if ConfigFile.Logs.Error {
 		mqtt.ERROR = log.New(os.Stdout, "[ERROR] ", 0)
