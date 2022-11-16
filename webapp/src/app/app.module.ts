@@ -8,8 +8,6 @@ import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 import { TokenInterceptor } from './token.interceptor';
 import { CgEdgeConfigService } from './cg-edge-config.service';
-import { Menu1Item1Component } from './menu1-item1/menu1-item1.component'
-import { Menu1Item1Side1Component } from './menu1-item1-side1/menu1-item1-side1.component'
 import { MqttCloudConnectorComponent } from './mqtt-cloud-connector/mqtt-cloud-connector.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatInputModule} from '@angular/material/input';
@@ -28,7 +26,6 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { WaitPopupComponent } from './wait-popup/wait-popup.component';
-import { LoginComponent } from './login/login.component';
 
 
 
@@ -36,12 +33,10 @@ import { LoginComponent } from './login/login.component';
 @NgModule({
   declarations: [
     AppComponent,
-    Menu1Item1Component,
-    Menu1Item1Side1Component,
     MqttCloudConnectorComponent,
     MessagePopupComponent,
     WaitPopupComponent,
-    LoginComponent,
+
   ],
   imports: [
     AppRoutingModule,

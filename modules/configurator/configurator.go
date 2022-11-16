@@ -1,13 +1,13 @@
 package configurator
 
-import yaml_parser "mqtt-pubsub/modules/yaml-parser"
+import config_parser "mqtt-pubsub/modules/config-parser"
 
-func GetConfig() yaml_parser.Config {
-	return yaml_parser.GetConfig()
+func GetConfig() config_parser.Config {
+	return config_parser.GetConfig()
 }
 
-func SetConfig(ConfigFile yaml_parser.Config) string {
-	err := yaml_parser.SetConfig(ConfigFile)
+func SetConfig(ConfigFile config_parser.Config) string {
+	err := config_parser.SetConfig(ConfigFile)
 	if err != nil {
 		return err.Error()
 	}

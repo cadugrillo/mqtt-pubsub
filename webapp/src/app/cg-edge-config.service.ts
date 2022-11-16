@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CgEdgeUsersService } from './cg-edge-users.service';
+import { HttpClient} from '@angular/common/http';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -8,26 +7,17 @@ import { environment } from '../environments/environment';
 })
 export class CgEdgeConfigService {
 
-  constructor(private httpClient: HttpClient,
-              private CgEdgeUsersService: CgEdgeUsersService) {}
+  constructor(private httpClient: HttpClient) {}
 
-httpOptions = {
-headers: new HttpHeaders({
-"Authorization": this.CgEdgeUsersService.getCurrentUserApiKey()
-})
-};
 
-getConfig(appName: string) {
-    return this.httpClient.get(environment.gateway + '/config/' + appName, this.httpOptions);
+getConfig() {
+    return this.httpClient.get(environment.gateway + '/mqtt-pubsub/config');
   }
 
 setMccConfig(mccConfig: MccConfig) {
-    return this.httpClient.post(environment.gateway + '/config/mqtt-cloud-connector', mccConfig, this.httpOptions);
+    return this.httpClient.post(environment.gateway + '/mqtt-pubsub/config', mccConfig);
   }
 
-setOpcuaConfig(opcuaConfig: OpcuaConfig) {
-    return this.httpClient.post(environment.gateway + '/config/opcua-mqtt-connector', opcuaConfig, this.httpOptions);
-  }
 }
 
 export class MccConfig {
@@ -60,9 +50,9 @@ class ClientSub {
 	UserName!:           string;
 	Password!:           string;
 	TlsConn!:            boolean;
-	RootCAPath!:         string;
-	ClientKeyPath!:      string;
-	PrivateKeyPath!:     string;
+	RootCA!:             string;
+	ClientKey!:          string;
+	PrivateKey!:         string;
 	InsecureSkipVerify!: boolean;
 }
 
@@ -80,9 +70,9 @@ class ClientPub {
   UserName!:           string;
   Password!:           string;
   TlsConn!:            boolean;
-  RootCAPath!:         string;
-  ClientKeyPath!:      string;
-  PrivateKeyPath!:     string;
+  RootCA!:             string;
+  ClientKey!:          string;
+  PrivateKey!:         string;
   InsecureSkipVerify!: boolean;
   TranslateTopic!:     boolean;
   PublishInterval!:    number;

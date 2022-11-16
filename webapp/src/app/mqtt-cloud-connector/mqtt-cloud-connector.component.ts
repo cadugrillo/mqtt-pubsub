@@ -24,8 +24,7 @@ export class MqttCloudConnectorComponent implements OnInit {
   }
 
   getConfig() {
-    this.appName = "mqtt-cloud-connector"
-    this.CgEdgeConfigService.getConfig(this.appName).subscribe((data) => {
+    this.CgEdgeConfigService.getConfig().subscribe((data) => {
       this.mccConfig = (data as MccConfig);
     });
   }

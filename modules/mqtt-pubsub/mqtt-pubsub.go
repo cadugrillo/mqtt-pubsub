@@ -5,7 +5,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"log"
-	yaml_parser "mqtt-pubsub/modules/yaml-parser"
+	config_parser "mqtt-pubsub/modules/config-parser"
 
 	"os"
 	"sync"
@@ -16,7 +16,7 @@ import (
 
 var (
 	once       sync.Once
-	ConfigFile yaml_parser.Config
+	ConfigFile config_parser.Config
 	b          Mqttbuffer
 	PubConnOk  bool
 	SubConnOk  bool
@@ -73,24 +73,24 @@ func (o *handler) handle(_ mqtt.Client, msg mqtt.Message) {
 	AddMessage(recmsg)
 }
 
-func NewTLSConfig(rootCAPath string, clientKeyPath string, privateKeyPath string, insecureSkipVerify bool) *tls.Config {
+func NewTLSConfig(rootCA string, clientKey string, privateKey string, insecureSkipVerify bool) *tls.Config {
 
 	certpool := x509.NewCertPool()
-	pemCerts, err := os.ReadFile(rootCAPath)
-	if err == nil {
-		certpool.AppendCertsFromPEM(pemCerts)
-	}
-
-	cert, err := tls.LoadX509KeyPair(clientKeyPath, privateKeyPath)
+	pemCerts, err := os.ReadFile(rootCA)
 	if err != nil {
-		panic(err)
+		return &tls.Config{}
+	}
+	certpool.AppendCertsFromPEM(pemCerts)
+
+	cert, err := tls.LoadX509KeyPair(clientKey, privateKey)
+	if err != nil {
+		return &tls.Config{}
 	}
 
 	cert.Leaf, err = x509.ParseCertificate(cert.Certificate[0])
 	if err != nil {
-		panic(err)
+		return &tls.Config{}
 	}
-	//fmt.Println(cert.Leaf)
 
 	return &tls.Config{
 		RootCAs:            certpool,
@@ -153,7 +153,7 @@ func (b Mqttbuffer) NewMessage() bool {
 
 func Run() {
 
-	ConfigFile = yaml_parser.LoadConfig()
+	ConfigFile = config_parser.LoadConfig()
 
 	if ConfigFile.ClientPub.PublishInterval < 50 {
 		ConfigFile.ClientPub.PublishInterval = 50

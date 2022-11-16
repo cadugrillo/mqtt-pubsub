@@ -3,8 +3,8 @@ package handlers
 import (
 	"encoding/json"
 	"io"
+	config_parser "mqtt-pubsub/modules/config-parser"
 	"mqtt-pubsub/modules/configurator"
-	yaml_parser "mqtt-pubsub/modules/yaml-parser"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,16 +28,16 @@ func SetConfigHandler(c *gin.Context) {
 
 ///////////////CONVERSIONs OF HTTP BODY TO SPECIFIC STRUCTURES////////////////////////////
 
-func convertHTTPBodyConfig(httpBody io.ReadCloser) (yaml_parser.Config, int, error) {
+func convertHTTPBodyConfig(httpBody io.ReadCloser) (config_parser.Config, int, error) {
 	body, err := io.ReadAll(httpBody)
 	if err != nil {
-		return yaml_parser.Config{}, http.StatusInternalServerError, err
+		return config_parser.Config{}, http.StatusInternalServerError, err
 	}
 	defer httpBody.Close()
-	var Config yaml_parser.Config
+	var Config config_parser.Config
 	err = json.Unmarshal(body, &Config)
 	if err != nil {
-		return yaml_parser.Config{}, http.StatusBadRequest, err
+		return config_parser.Config{}, http.StatusBadRequest, err
 	}
 	return Config, http.StatusOK, nil
 }
