@@ -5,6 +5,8 @@ import (
 	mqttpubsub "mqtt-pubsub/modules/mqtt-pubsub"
 	"os"
 	"os/signal"
+	"path"
+	"path/filepath"
 	"runtime/debug"
 	"syscall"
 
@@ -20,6 +22,16 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.Use(CORSMiddleware())
+
+	r.NoRoute(func(c *gin.Context) {
+		dir, file := path.Split(c.Request.RequestURI)
+		ext := filepath.Ext(file)
+		if file == "" || ext == "" {
+			c.File("./webapp/dist/index.html")
+		} else {
+			c.File("./webapp/dist/" + path.Join(dir, file))
+		}
+	})
 
 	r.GET("/mqtt-pubsub/config", handlers.GetConfigHandler)
 	r.POST("/mqtt-pubsub/config", handlers.SetConfigHandler)
