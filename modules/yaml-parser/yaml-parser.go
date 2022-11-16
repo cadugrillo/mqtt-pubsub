@@ -21,9 +21,9 @@ type Config struct {
 		UserName           string `yaml:"userName"`
 		Password           string `yaml:"password"`
 		TlsConn            bool   `yaml:"tlsConn"`
-		RootCAPath         string `yaml:"rootCAPath"`
-		ClientKeyPath      string `yaml:"clientKeyPath"`
-		PrivateKeyPath     string `yaml:"privateKeyPath"`
+		RootCA             string `yaml:"rootCA"`
+		ClientKey          string `yaml:"clientKey"`
+		PrivateKey         string `yaml:"privateKey"`
 		InsecureSkipVerify bool   `yaml:"insecureSkipVerify"`
 	} `yaml:"clientSub"`
 	ClientPub struct {
@@ -40,9 +40,9 @@ type Config struct {
 		UserName           string `yaml:"userName"`
 		Password           string `yaml:"password"`
 		TlsConn            bool   `yaml:"tlsConn"`
-		RootCAPath         string `yaml:"rootCAPath"`
-		ClientKeyPath      string `yaml:"clientKeyPath"`
-		PrivateKeyPath     string `yaml:"privateKeyPath"`
+		RootCA             string `yaml:"rootCA"`
+		ClientKey          string `yaml:"clientKey"`
+		PrivateKey         string `yaml:"privateKey"`
 		InsecureSkipVerify bool   `yaml:"insecureSkipVerify"`
 		TranslateTopic     bool   `yaml:"translateTopic"`
 		PublishInterval    int    `yaml:"publishInterval"`
@@ -97,6 +97,36 @@ func SetConfig(ConfigFile Config) error {
 
 func LoadConfig() Config {
 	cfg := GetConfig()
+
+	err := os.WriteFile("./certs/pub/Certificate.crt", []byte(cfg.ClientPub.ClientKey), os.ModePerm)
+	if err != nil {
+		return Config{}
+	}
+
+	err = os.WriteFile("./certs/pub/PrivateKey.key", []byte(cfg.ClientPub.PrivateKey), os.ModePerm)
+	if err != nil {
+		return Config{}
+	}
+
+	err = os.WriteFile("./certs/pub/RootCA.pem", []byte(cfg.ClientPub.RootCA), os.ModePerm)
+	if err != nil {
+		return Config{}
+	}
+
+	err = os.WriteFile("./certs/sub/Certificate.crt", []byte(cfg.ClientSub.ClientKey), os.ModePerm)
+	if err != nil {
+		return Config{}
+	}
+
+	err = os.WriteFile("./certs/sub/PrivateKey.key", []byte(cfg.ClientSub.PrivateKey), os.ModePerm)
+	if err != nil {
+		return Config{}
+	}
+
+	err = os.WriteFile("./certs/sub/RootCA.pem", []byte(cfg.ClientSub.RootCA), os.ModePerm)
+	if err != nil {
+		return Config{}
+	}
 
 	return cfg
 }

@@ -13,14 +13,14 @@ clientSub:
   userName: "rw"
   password: "readwrite"
   tlsConn: false
-  rootCAPath: "./certs/sub/xxxxxxxx"
-  clientKeyPath: "./certs/sub/xxxxxxxx"
-  privateKeyPath: "./certs/sub/xxxxxxxx"
+  rootCA: "-----BEGIN CERTIFICATE-----\nROOTCA\n-----END CERTIFICATE-----"
+  clientKey: "-----BEGIN CERTIFICATE-----\nCERTIFICATE\n-----END CERTIFICATE-----"
+  privateKey: "-----BEGIN RSA PRIVATE KEY-----\nPRIVATEKEY\n-----END RSA PRIVATE KEY-----"
   insecureSkipVerify: true
 
 clientPub:
   clientId: "cgedgedebug"
-  serverAddress: "tcp://172.24.50.102:1883"
+  serverAddress: "tcp://test.mosquitto.org:1883"
   qos: 1
   connectionTimeout: 1
   writeTimeout: 1
@@ -32,18 +32,18 @@ clientPub:
   userName: ""
   password: ""
   tlsConn: false
-  rootCAPath: "./certs/pub/empty_ca.pem"
-  clientKeyPath: "./certs/pub/empty_cert.pem"
-  privateKeyPath: "./certs/pub/empty_key.pem"
+  rootCA: "-----BEGIN CERTIFICATE-----\nROOTCA\n-----END CERTIFICATE-----"
+  clientKey: "-----BEGIN CERTIFICATE-----\nCERTIFICATE\n-----END CERTIFICATE-----"
+  privateKey: "-----BEGIN RSA PRIVATE KEY-----\nPRIVATEKEY\n-----END RSA PRIVATE KEY-----"
   insecureSkipVerify: true
   translateTopic: false
   publishInterval: 250
 
 #LOGS
 logs:
-  subPayload: true
-  debug: true
-  warning: true
+  subPayload: false
+  debug: false
+  warning: false
   error: true
   critical: true
 

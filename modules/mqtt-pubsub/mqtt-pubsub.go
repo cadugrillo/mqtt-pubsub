@@ -3,9 +3,7 @@ package mqttpubsub
 import (
 	"crypto/tls"
 	"crypto/x509"
-	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	yaml_parser "mqtt-pubsub/modules/yaml-parser"
 
@@ -78,7 +76,7 @@ func (o *handler) handle(_ mqtt.Client, msg mqtt.Message) {
 func NewTLSConfig(rootCAPath string, clientKeyPath string, privateKeyPath string, insecureSkipVerify bool) *tls.Config {
 
 	certpool := x509.NewCertPool()
-	pemCerts, err := ioutil.ReadFile(rootCAPath)
+	pemCerts, err := os.ReadFile(rootCAPath)
 	if err == nil {
 		certpool.AppendCertsFromPEM(pemCerts)
 	}
@@ -124,7 +122,6 @@ func AddMessage(message Message) {
 	}
 	b.Buffer[b.WritePointer] = message
 	b.WritePointer++
-	return
 }
 
 func ReadMessage(index int) (Message, error) {
@@ -132,7 +129,7 @@ func ReadMessage(index int) (Message, error) {
 		return b.Buffer[index], nil
 	}
 	msg := Message{}
-	return msg, errors.New(fmt.Sprintf("Index %d greater then buffer size [%d]", index, len(b.Buffer)))
+	return msg, fmt.Errorf(fmt.Sprintf("Index %d greater then buffer size [%d]", index, len(b.Buffer)))
 }
 
 func NextMessage() {
@@ -313,16 +310,11 @@ func Run() {
 			time.Sleep(time.Duration(ConfigFile.ClientPub.PublishInterval) * time.Millisecond)
 		}
 	}()
+}
 
-	// Messages will be delivered asynchronously so we just need to wait for a signal to shutdown
-	// sig := make(chan os.Signal, 2)
-	// signal.Notify(sig, os.Interrupt)
-	// signal.Notify(sig, syscall.SIGTERM)
-
-	// <-sig
-	// fmt.Println("signal caught - exiting")
-	// ClientSub.Disconnect(1000)
-	// ClientPub.Disconnect(1000)
-	// fmt.Println("shutdown complete")
-
+func CloseConnections() {
+	fmt.Println("signal caught - exiting")
+	ClientSub.Disconnect(1000)
+	ClientPub.Disconnect(1000)
+	fmt.Println("shutdown complete")
 }

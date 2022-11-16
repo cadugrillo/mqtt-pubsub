@@ -1,17 +1,22 @@
 package main
 
 import (
-	"fmt"
 	"mqtt-pubsub/handlers"
 	mqttpubsub "mqtt-pubsub/modules/mqtt-pubsub"
+	"os"
+	"os/signal"
 	"runtime/debug"
+	"syscall"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	debug.SetGCPercent(10)
 
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
+
+	debug.SetGCPercent(10)
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.Use(CORSMiddleware())
@@ -20,13 +25,16 @@ func main() {
 	r.POST("/mqtt-pubsub/config", handlers.SetConfigHandler)
 
 	go mqttpubsub.Run()
-	defer CloseConnections()
 
-	err := r.Run(":9091")
-	if err != nil {
-		panic(err)
-	}
+	go func() {
+		err := r.Run(":9091")
+		if err != nil {
+			panic(err)
+		}
+	}()
 
+	<-sig
+	mqttpubsub.CloseConnections()
 }
 
 func CORSMiddleware() gin.HandlerFunc {
@@ -42,11 +50,4 @@ func CORSMiddleware() gin.HandlerFunc {
 
 		c.Next()
 	}
-}
-
-func CloseConnections() {
-	fmt.Println("signal caught - exiting")
-	mqttpubsub.ClientSub.Disconnect(1000)
-	mqttpubsub.ClientPub.Disconnect(1000)
-	fmt.Println("shutdown complete")
 }
