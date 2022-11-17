@@ -159,6 +159,8 @@ func Run() {
 		ConfigFile.ClientPub.PublishInterval = 100
 	}
 
+	tickerMultiplier := ConfigFile.ClientPub.PublishInterval * 5
+
 	//logs
 	if ConfigFile.Logs.Error {
 		mqtt.ERROR = log.New(os.Stdout, "[ERROR] ", 0)
@@ -284,39 +286,8 @@ func Run() {
 	}
 	fmt.Println("PUB BROKER  - CONNECTION IS UP")
 
-	// go func() {
-	// 	for {
-	// 		if b.NewMessage() && PubConnOk {
-	// 			msg, err := ReadMessage(GetReadPointer())
-	// 			if err != nil {
-	// 				panic(err.Error())
-	// 			}
-	// 			if ConfigFile.Logs.SubPayload {
-	// 				fmt.Println(msg.Payload)
-	// 				fmt.Println(GetWritePointer())
-	// 				fmt.Println(GetReadPointer())
-	// 			}
-	// 			switch ConfigFile.ClientPub.TranslateTopic {
-	// 			case false:
-	// 				ClientPub.Publish(msg.Topic, msg.Qos, msg.Retained, msg.Payload)
-	// 			case true:
-	// 				for i := 0; i < len(ConfigFile.TopicsSub.Topic); i++ {
-	// 					if ConfigFile.TopicsSub.Topic[i] == msg.Topic {
-	// 						TranslatedTopic := ConfigFile.TopicsPub.Topic[i]
-	// 						ClientPub.Publish(TranslatedTopic, msg.Qos, msg.Retained, msg.Payload)
-	// 						break
-	// 					}
-	// 				}
-	// 			}
-	// 			NextMessage()
-	// 			//b.ReadPointer = b.NextMessage()
-	// 		}
-	// 		time.Sleep(time.Duration(ConfigFile.ClientPub.PublishInterval) * time.Millisecond)
-	// 	}
-	// }()
-
 	go func() {
-		ticker := time.NewTicker(500 * time.Millisecond)
+		ticker := time.NewTicker(time.Duration(tickerMultiplier) * time.Millisecond)
 		defer ticker.Stop()
 		for {
 			select {
