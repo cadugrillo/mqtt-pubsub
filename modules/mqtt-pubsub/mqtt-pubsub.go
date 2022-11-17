@@ -155,8 +155,8 @@ func Run() {
 
 	ConfigFile = config_parser.LoadConfig()
 
-	if ConfigFile.ClientPub.PublishInterval < 50 {
-		ConfigFile.ClientPub.PublishInterval = 50
+	if ConfigFile.ClientPub.PublishInterval < 100 {
+		ConfigFile.ClientPub.PublishInterval = 100
 	}
 
 	//logs
@@ -284,34 +284,69 @@ func Run() {
 	}
 	fmt.Println("PUB BROKER  - CONNECTION IS UP")
 
+	// go func() {
+	// 	for {
+	// 		if b.NewMessage() && PubConnOk {
+	// 			msg, err := ReadMessage(GetReadPointer())
+	// 			if err != nil {
+	// 				panic(err.Error())
+	// 			}
+	// 			if ConfigFile.Logs.SubPayload {
+	// 				fmt.Println(msg.Payload)
+	// 				fmt.Println(GetWritePointer())
+	// 				fmt.Println(GetReadPointer())
+	// 			}
+	// 			switch ConfigFile.ClientPub.TranslateTopic {
+	// 			case false:
+	// 				ClientPub.Publish(msg.Topic, msg.Qos, msg.Retained, msg.Payload)
+	// 			case true:
+	// 				for i := 0; i < len(ConfigFile.TopicsSub.Topic); i++ {
+	// 					if ConfigFile.TopicsSub.Topic[i] == msg.Topic {
+	// 						TranslatedTopic := ConfigFile.TopicsPub.Topic[i]
+	// 						ClientPub.Publish(TranslatedTopic, msg.Qos, msg.Retained, msg.Payload)
+	// 						break
+	// 					}
+	// 				}
+	// 			}
+	// 			NextMessage()
+	// 			//b.ReadPointer = b.NextMessage()
+	// 		}
+	// 		time.Sleep(time.Duration(ConfigFile.ClientPub.PublishInterval) * time.Millisecond)
+	// 	}
+	// }()
+
 	go func() {
+		ticker := time.NewTicker(500 * time.Millisecond)
+		defer ticker.Stop()
 		for {
-			if b.NewMessage() && PubConnOk {
-				msg, err := ReadMessage(GetReadPointer())
-				if err != nil {
-					panic(err.Error())
-				}
-				if ConfigFile.Logs.SubPayload {
-					fmt.Println(msg.Payload)
-					fmt.Println(GetWritePointer())
-					fmt.Println(GetReadPointer())
-				}
-				switch ConfigFile.ClientPub.TranslateTopic {
-				case false:
-					ClientPub.Publish(msg.Topic, msg.Qos, msg.Retained, msg.Payload)
-				case true:
-					for i := 0; i < len(ConfigFile.TopicsSub.Topic); i++ {
-						if ConfigFile.TopicsSub.Topic[i] == msg.Topic {
-							TranslatedTopic := ConfigFile.TopicsPub.Topic[i]
-							ClientPub.Publish(TranslatedTopic, msg.Qos, msg.Retained, msg.Payload)
-							break
+			select {
+			case <-ticker.C:
+				for b.NewMessage() && PubConnOk {
+					msg, err := ReadMessage(GetReadPointer())
+					if err != nil {
+						panic(err.Error())
+					}
+					if ConfigFile.Logs.SubPayload {
+						fmt.Println(msg.Payload)
+						fmt.Println(GetWritePointer())
+						fmt.Println(GetReadPointer())
+					}
+					switch ConfigFile.ClientPub.TranslateTopic {
+					case false:
+						ClientPub.Publish(msg.Topic, msg.Qos, msg.Retained, msg.Payload)
+					case true:
+						for i := 0; i < len(ConfigFile.TopicsSub.Topic); i++ {
+							if ConfigFile.TopicsSub.Topic[i] == msg.Topic {
+								TranslatedTopic := ConfigFile.TopicsPub.Topic[i]
+								ClientPub.Publish(TranslatedTopic, msg.Qos, msg.Retained, msg.Payload)
+								break
+							}
 						}
 					}
+					NextMessage()
+					time.Sleep(time.Duration(ConfigFile.ClientPub.PublishInterval) * time.Millisecond)
 				}
-				NextMessage()
-				//b.ReadPointer = b.NextMessage()
 			}
-			time.Sleep(time.Duration(ConfigFile.ClientPub.PublishInterval) * time.Millisecond)
 		}
 	}()
 }
