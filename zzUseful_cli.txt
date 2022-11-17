@@ -1,0 +1,2 @@
+//////BUILD MULTI ARCH DOCKER IMAGES////////////
+docker buildx build --platform=linux/arm/v7,linux/arm64,linux/amd64 -t vessl/mqtt-pubsub:0.1 --push .
