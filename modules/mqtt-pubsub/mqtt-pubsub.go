@@ -22,6 +22,7 @@ var (
 	SubConnOk  bool
 	ClientSub  mqtt.Client
 	ClientPub  mqtt.Client
+	status     string = "stopped" // (stopped, starting, running, stopping)
 )
 
 type Mqttbuffer struct {
@@ -41,6 +42,10 @@ type Message struct {
 	Ack       bool
 }
 
+type handler struct {
+	f bool
+}
+
 func init() {
 	once.Do(initialise)
 }
@@ -51,8 +56,29 @@ func initialise() {
 	SubConnOk = false
 }
 
-type handler struct {
-	f bool
+func StartService() string {
+
+	if status != "stopped" {
+		return "Service Already Starting or Running"
+	}
+
+	go Run()
+	status = "starting"
+	return "Service Start requested"
+}
+
+func StopService() string {
+
+	if status == "stopped" {
+		return "Service Already Stopped"
+	}
+
+	status = "stopping"
+	return CloseConnections()
+}
+
+func GetServiceStatus() string {
+	return status
 }
 
 func NewHandler() *handler {
@@ -285,11 +311,12 @@ func Run() {
 		panic(tokenPub.Error())
 	}
 	fmt.Println("PUB BROKER  - CONNECTION IS UP")
+	status = "running"
 
 	go func() {
 		ticker := time.NewTicker(time.Duration(tickerMultiplier) * time.Millisecond)
 		defer ticker.Stop()
-		for {
+		for status == "running" {
 			select {
 			case <-ticker.C:
 				for b.NewMessage() && PubConnOk {
@@ -315,16 +342,21 @@ func Run() {
 						}
 					}
 					NextMessage()
+
 					time.Sleep(time.Duration(ConfigFile.ClientPub.PublishInterval) * time.Millisecond)
 				}
 			}
 		}
+		fmt.Println("Stop Service - Shutdown Complete")
 	}()
+
 }
 
-func CloseConnections() {
-	fmt.Println("signal caught - exiting")
+func CloseConnections() string {
+	fmt.Println("Stop Service  - Shutdown in Progress")
 	ClientSub.Disconnect(1000)
 	ClientPub.Disconnect(1000)
-	fmt.Println("shutdown complete")
+	//fmt.Println("Shutdown complete")
+	status = "stopped"
+	return "Service Stopped"
 }

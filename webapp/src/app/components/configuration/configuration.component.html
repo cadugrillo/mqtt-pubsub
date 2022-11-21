@@ -3,11 +3,15 @@
 </mat-toolbar>
 <section>
   <div class="example-button-row">
+    <button mat-raised-button color="primary" (click)="startService()">Start Service</button>    
+    <button mat-raised-button color="primary" (click)="stopService()">Stop Service</button> 
+    <button mat-raised-button color="primary" (click)="getServiceStatus()">Status</button>
+    <span *ngIf="status" style="margin-right: 20px;">Service Status: {{status}}</span>  
     <button mat-raised-button color="primary" (click)="getConfig()">Read Configuration</button>
     <button mat-raised-button color="primary" (click)="setConfig()">Write Configuration</button>
     <button mat-raised-button color="primary" (click)="importConfig()">Import Configuration</button>
     <input type="file" #file accept=".json" style="display: none" (change)="onFilesAdded()"/>
-    <button mat-raised-button color="primary" (click)="exportConfig()">Export Configuration</button>  
+    <button mat-raised-button color="primary" (click)="exportConfig()">Export Configuration</button>
   </div>
 </section>
 <mat-tab-group class="tab-group" dynamicHeight>

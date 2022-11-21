@@ -18,6 +18,18 @@ setMccConfig(mccConfig: MccConfig) {
     return this.httpClient.post(environment.gateway + '/mqtt-pubsub/config', mccConfig);
   }
 
+  startService() {
+    return this.httpClient.get(environment.gateway + '/mqtt-pubsub/start');
+  }
+
+  stopService() {
+    return this.httpClient.get(environment.gateway + '/mqtt-pubsub/stop');
+  }
+
+  getServiceStatus() {
+    return this.httpClient.get(environment.gateway + '/mqtt-pubsub/status');
+  }
+
 }
 
 export class MccConfig {

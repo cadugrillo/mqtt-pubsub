@@ -13,6 +13,7 @@ export class ConfigurationComponent implements OnInit {
 
   appName!: string;
   newTopic!: string;
+  status!: string;
   mccConfig: MccConfig = new MccConfig();
   @ViewChild('file') file: any
 
@@ -21,6 +22,7 @@ export class ConfigurationComponent implements OnInit {
 
   ngOnInit(): void {
     this.getConfig();
+    this.getServiceStatus();
   }
 
   getConfig() {
@@ -35,6 +37,24 @@ export class ConfigurationComponent implements OnInit {
       this.getConfig()
     });
     
+  }
+
+  startService() {
+    this.CgEdgeConfigService.startService().subscribe((data) => {
+      this.dialog.open(MessagePopupComponent, {data: {title: "Service Status", text: data}});
+    });
+  }
+
+  stopService() {
+    this.CgEdgeConfigService.stopService().subscribe((data) => {
+      this.dialog.open(MessagePopupComponent, {data: {title: "Service Status", text: data}});
+    });
+  }
+
+  getServiceStatus() {
+    this.CgEdgeConfigService.getServiceStatus().subscribe((data) => {
+      this.status = data as string;
+    });
   }
 
   addSubTopic() {

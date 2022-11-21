@@ -5,6 +5,7 @@ import (
 	"io"
 	config_parser "mqtt-pubsub/modules/config-parser"
 	"mqtt-pubsub/modules/configurator"
+	mqttpubsub "mqtt-pubsub/modules/mqtt-pubsub"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -23,6 +24,21 @@ func SetConfigHandler(c *gin.Context) {
 		return
 	}
 	c.JSON(statusCode, configurator.SetConfig(configFile))
+	return
+}
+
+func StartServiceHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, mqttpubsub.StartService())
+	return
+}
+
+func StopServiceHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, mqttpubsub.StopService())
+	return
+}
+
+func GetServiceStatusHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, mqttpubsub.GetServiceStatus())
 	return
 }
 
