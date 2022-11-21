@@ -319,7 +319,7 @@ func Run() {
 		for status == "running" {
 			select {
 			case <-ticker.C:
-				for b.NewMessage() && PubConnOk {
+				for b.NewMessage() && PubConnOk && status == "running" {
 					msg, err := ReadMessage(GetReadPointer())
 					if err != nil {
 						panic(err.Error())
@@ -356,7 +356,6 @@ func CloseConnections() string {
 	fmt.Println("Stop Service  - Shutdown in Progress")
 	ClientSub.Disconnect(1000)
 	ClientPub.Disconnect(1000)
-	//fmt.Println("Shutdown complete")
 	status = "stopped"
 	return "Service Stopped"
 }
