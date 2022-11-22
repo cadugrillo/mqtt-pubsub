@@ -131,7 +131,7 @@
           </mat-form-field>
           <mat-form-field class="example-full-width" appearance="fill"  *ngIf="mccConfig?.ClientPub">
             <mat-label>Publish Interval (ms)</mat-label>
-            <input matInput type="number" placeholder="" [(ngModel)]="mccConfig.ClientPub.PublishInterval">
+            <input matInput type="number" min="250" placeholder="" [(ngModel)]="mccConfig.ClientPub.PublishInterval">
           </mat-form-field>
           <mat-checkbox class="example-margin" color="primary" [(ngModel)]="mccConfig.ClientPub.TranslateTopic" *ngIf="mccConfig?.ClientPub">Translate Topic</mat-checkbox>
           <mat-checkbox class="example-margin" color="primary" [(ngModel)]="mccConfig.ClientPub.ConnectRetry" *ngIf="mccConfig?.ClientPub">Connection Retry</mat-checkbox>

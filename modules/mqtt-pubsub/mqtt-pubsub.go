@@ -181,8 +181,8 @@ func Run() {
 
 	ConfigFile = config_parser.LoadConfig()
 
-	if ConfigFile.ClientPub.PublishInterval < 100 {
-		ConfigFile.ClientPub.PublishInterval = 100
+	if ConfigFile.ClientPub.PublishInterval < 250 {
+		ConfigFile.ClientPub.PublishInterval = 250
 	}
 
 	tickerMultiplier := ConfigFile.ClientPub.PublishInterval * 5

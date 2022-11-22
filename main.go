@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"runtime/debug"
 
-	"github.com/gin-contrib/pprof"
+	//"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,7 +17,7 @@ func main() {
 	r := gin.Default()
 	r.Use(CORSMiddleware())
 
-	pprof.Register(r)
+	//pprof.Register(r)
 
 	r.NoRoute(func(c *gin.Context) {
 		dir, file := path.Split(c.Request.RequestURI)
