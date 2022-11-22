@@ -17,44 +17,44 @@ import (
 var (
 	once       sync.Once
 	ConfigFile config_parser.Config
-	b          Mqttbuffer
-	PubConnOk  bool
-	SubConnOk  bool
-	ClientSub  mqtt.Client
-	ClientPub  mqtt.Client
-	status     string = "stopped" // (stopped, starting, running, stopping)
+	//b          Mqttbuffer
+	PubConnOk bool
+	SubConnOk bool
+	ClientSub mqtt.Client
+	ClientPub mqtt.Client
+	status    string = "stopped" // (stopped, starting, running, stopping)
 )
 
-type Mqttbuffer struct {
-	Buffer       [300000]Message
-	ReadPointer  int
-	WritePointer int
-}
+// type Mqttbuffer struct {
+// 	Buffer       [300000]Message
+// 	ReadPointer  int
+// 	WritePointer int
+// }
 
 // Message
-type Message struct {
-	Duplicate bool
-	Qos       byte
-	Retained  bool
-	Topic     string
-	MessageID uint16
-	Payload   string
-	Ack       bool
-}
+// type Message struct {
+// 	Duplicate bool
+// 	Qos       byte
+// 	Retained  bool
+// 	Topic     string
+// 	MessageID uint16
+// 	Payload   string
+// 	Ack       bool
+// }
 
 type handler struct {
 	f bool
 }
 
 func init() {
-	once.Do(initialise)
+	// once.Do(initialise)
 }
 
-func initialise() {
-	b = NewMqttbuffer()
-	PubConnOk = false
-	SubConnOk = false
-}
+// func initialise() {
+// 	b = NewMqttbuffer()
+// 	PubConnOk = false
+// 	SubConnOk = false
+// }
 
 func StartService() string {
 
@@ -88,15 +88,19 @@ func NewHandler() *handler {
 
 func (o *handler) handle(_ mqtt.Client, msg mqtt.Message) {
 
-	var recmsg Message
-	recmsg.Duplicate = msg.Duplicate()
-	recmsg.Qos = msg.Qos()
-	recmsg.Retained = msg.Retained()
-	recmsg.MessageID = msg.MessageID()
-	recmsg.Topic = msg.Topic()
-	recmsg.Payload = string(msg.Payload())
+	// var recmsg Message
+	// recmsg.Duplicate = msg.Duplicate()
+	// recmsg.Qos = msg.Qos()
+	// recmsg.Retained = msg.Retained()
+	// recmsg.MessageID = msg.MessageID()
+	// recmsg.Topic = msg.Topic()
+	// recmsg.Payload = string(msg.Payload())
 
-	AddMessage(recmsg)
+	// AddMessage(recmsg)
+
+	if PubConnOk {
+		ClientPub.Publish(msg.Topic(), msg.Qos(), msg.Retained(), string(msg.Payload()))
+	}
 }
 
 func NewTLSConfig(rootCA string, clientKey string, privateKey string, insecureSkipVerify bool) *tls.Config {
@@ -127,65 +131,65 @@ func NewTLSConfig(rootCA string, clientKey string, privateKey string, insecureSk
 	}
 }
 
-func NewMqttbuffer() Mqttbuffer {
-	b := Mqttbuffer{}
-	return b
-}
+// func NewMqttbuffer() Mqttbuffer {
+// 	b := Mqttbuffer{}
+// 	return b
+// }
 
-func GetReadPointer() int {
-	return b.ReadPointer
-}
+// func GetReadPointer() int {
+// 	return b.ReadPointer
+// }
 
-func GetWritePointer() int {
-	return b.WritePointer
-}
+// func GetWritePointer() int {
+// 	return b.WritePointer
+// }
 
-func AddMessage(message Message) {
-	if b.WritePointer == len(b.Buffer)-1 {
-		b.Buffer[b.WritePointer] = message
-		b.WritePointer = 0
-		return
-	}
-	b.Buffer[b.WritePointer] = message
-	b.WritePointer++
-}
+// func AddMessage(message Message) {
+// 	if b.WritePointer == len(b.Buffer)-1 {
+// 		b.Buffer[b.WritePointer] = message
+// 		b.WritePointer = 0
+// 		return
+// 	}
+// 	b.Buffer[b.WritePointer] = message
+// 	b.WritePointer++
+// }
 
-func ReadMessage(index int) (Message, error) {
-	if index < len(b.Buffer) {
-		return b.Buffer[index], nil
-	}
-	msg := Message{}
-	return msg, fmt.Errorf(fmt.Sprintf("Index %d greater then buffer size [%d]", index, len(b.Buffer)))
-}
+// func ReadMessage(index int) (Message, error) {
+// 	if index < len(b.Buffer) {
+// 		return b.Buffer[index], nil
+// 	}
+// 	msg := Message{}
+// 	return msg, fmt.Errorf(fmt.Sprintf("Index %d greater then buffer size [%d]", index, len(b.Buffer)))
+// }
 
-func NextMessage() {
-	if b.ReadPointer == len(b.Buffer)-1 {
-		b.ReadPointer = 0
-		//return b.ReadPointer
-		return
-	}
-	if b.ReadPointer != b.WritePointer {
-		b.ReadPointer++
-		//return b.ReadPointer
-		return
-	}
-	fmt.Println("No new messages on the buffer")
-	//return b.ReadPointer
-}
+// func NextMessage() {
+// 	if b.ReadPointer == len(b.Buffer)-1 {
+// 		b.ReadPointer = 0
+// 		//return b.ReadPointer
+// 		return
+// 	}
+// 	if b.ReadPointer != b.WritePointer {
+// 		b.ReadPointer++
+// 		//return b.ReadPointer
+// 		return
+// 	}
+// 	fmt.Println("No new messages on the buffer")
+// 	//return b.ReadPointer
+// }
 
-func (b Mqttbuffer) NewMessage() bool {
-	return b.WritePointer != b.ReadPointer
-}
+// func (b Mqttbuffer) NewMessage() bool {
+// 	return b.WritePointer != b.ReadPointer
+// }
 
 func Run() {
 
 	ConfigFile = config_parser.LoadConfig()
 
-	if ConfigFile.ClientPub.PublishInterval < 250 {
-		ConfigFile.ClientPub.PublishInterval = 250
-	}
+	// if ConfigFile.ClientPub.PublishInterval < 250 {
+	// 	ConfigFile.ClientPub.PublishInterval = 250
+	// }
 
-	tickerMultiplier := ConfigFile.ClientPub.PublishInterval * 5
+	//tickerMultiplier := ConfigFile.ClientPub.PublishInterval * 5
 
 	//logs
 	if ConfigFile.Logs.Error {
@@ -313,42 +317,42 @@ func Run() {
 	fmt.Println("PUB BROKER  - CONNECTION IS UP")
 	status = "running"
 
-	go func() {
-		ticker := time.NewTicker(time.Duration(tickerMultiplier) * time.Millisecond)
-		defer ticker.Stop()
-		for status == "running" {
-			select {
-			case <-ticker.C:
-				for b.NewMessage() && PubConnOk && status == "running" {
-					msg, err := ReadMessage(GetReadPointer())
-					if err != nil {
-						panic(err.Error())
-					}
-					if ConfigFile.Logs.SubPayload {
-						fmt.Println(msg.Payload)
-						fmt.Println(GetWritePointer())
-						fmt.Println(GetReadPointer())
-					}
-					switch ConfigFile.ClientPub.TranslateTopic {
-					case false:
-						ClientPub.Publish(msg.Topic, msg.Qos, msg.Retained, msg.Payload)
-					case true:
-						for i := 0; i < len(ConfigFile.TopicsSub.Topic); i++ {
-							if ConfigFile.TopicsSub.Topic[i] == msg.Topic {
-								TranslatedTopic := ConfigFile.TopicsPub.Topic[i]
-								ClientPub.Publish(TranslatedTopic, msg.Qos, msg.Retained, msg.Payload)
-								break
-							}
-						}
-					}
-					NextMessage()
+	// go func() {
+	// 	ticker := time.NewTicker(time.Duration(tickerMultiplier) * time.Millisecond)
+	// 	defer ticker.Stop()
+	// 	for status == "running" {
+	// 		select {
+	// 		case <-ticker.C:
+	// 			for b.NewMessage() && PubConnOk && status == "running" {
+	// 				msg, err := ReadMessage(GetReadPointer())
+	// 				if err != nil {
+	// 					panic(err.Error())
+	// 				}
+	// 				if ConfigFile.Logs.SubPayload {
+	// 					fmt.Println(msg.Payload)
+	// 					fmt.Println(GetWritePointer())
+	// 					fmt.Println(GetReadPointer())
+	// 				}
+	// 				switch ConfigFile.ClientPub.TranslateTopic {
+	// 				case false:
+	// 					ClientPub.Publish(msg.Topic, msg.Qos, msg.Retained, msg.Payload)
+	// 				case true:
+	// 					for i := 0; i < len(ConfigFile.TopicsSub.Topic); i++ {
+	// 						if ConfigFile.TopicsSub.Topic[i] == msg.Topic {
+	// 							TranslatedTopic := ConfigFile.TopicsPub.Topic[i]
+	// 							ClientPub.Publish(TranslatedTopic, msg.Qos, msg.Retained, msg.Payload)
+	// 							break
+	// 						}
+	// 					}
+	// 				}
+	// 				NextMessage()
 
-					time.Sleep(time.Duration(ConfigFile.ClientPub.PublishInterval) * time.Millisecond)
-				}
-			}
-		}
-		fmt.Println("Stop Service - Shutdown Complete")
-	}()
+	// 				time.Sleep(time.Duration(ConfigFile.ClientPub.PublishInterval) * time.Millisecond)
+	// 			}
+	// 		}
+	// 	}
+	// 	fmt.Println("Stop Service - Shutdown Complete")
+	// }()
 
 }
 
@@ -356,6 +360,9 @@ func CloseConnections() string {
 	fmt.Println("Stop Service  - Shutdown in Progress")
 	ClientSub.Disconnect(1000)
 	ClientPub.Disconnect(1000)
+	fmt.Println("Subscriber - Connected = ", ClientSub.IsConnected())
+	fmt.Println("Publisher - Connected = ", ClientPub.IsConnected())
+	fmt.Println("Stop Service - Shutdown Complete")
 	status = "stopped"
 	return "Service Stopped"
 }
