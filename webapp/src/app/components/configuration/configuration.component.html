@@ -3,11 +3,15 @@
 </mat-toolbar>
 <section>
   <div class="example-button-row">
+    <button mat-raised-button color="primary" (click)="startService()">Start Service</button>    
+    <button mat-raised-button color="primary" (click)="stopService()">Stop Service</button> 
+    <button mat-raised-button color="primary" (click)="getServiceStatus()">Status</button>
+    <span *ngIf="status" style="margin-right: 20px;">Service Status: {{status}}</span>  
     <button mat-raised-button color="primary" (click)="getConfig()">Read Configuration</button>
     <button mat-raised-button color="primary" (click)="setConfig()">Write Configuration</button>
     <button mat-raised-button color="primary" (click)="importConfig()">Import Configuration</button>
     <input type="file" #file accept=".json" style="display: none" (change)="onFilesAdded()"/>
-    <button mat-raised-button color="primary" (click)="exportConfig()">Export Configuration</button>  
+    <button mat-raised-button color="primary" (click)="exportConfig()">Export Configuration</button>
   </div>
 </section>
 <mat-tab-group class="tab-group" dynamicHeight>
@@ -125,11 +129,11 @@
             <mat-label>Ping Timeout (s)</mat-label>
             <input matInput type="number" placeholder="" [(ngModel)]="mccConfig.ClientPub.PingTimeout" *ngIf="mccConfig?.ClientPub">
           </mat-form-field>
-          <mat-form-field class="example-full-width" appearance="fill"  *ngIf="mccConfig?.ClientPub">
+          <!-- <mat-form-field class="example-full-width" appearance="fill"  *ngIf="mccConfig?.ClientPub">
             <mat-label>Publish Interval (ms)</mat-label>
-            <input matInput type="number" placeholder="" [(ngModel)]="mccConfig.ClientPub.PublishInterval">
-          </mat-form-field>
-          <mat-checkbox class="example-margin" color="primary" [(ngModel)]="mccConfig.ClientPub.TranslateTopic" *ngIf="mccConfig?.ClientPub">Translate Topic</mat-checkbox>
+            <input matInput type="number" min="250" placeholder="" [(ngModel)]="mccConfig.ClientPub.PublishInterval">
+          </mat-form-field> -->
+          <!-- <mat-checkbox class="example-margin" color="primary" [(ngModel)]="mccConfig.ClientPub.TranslateTopic" *ngIf="mccConfig?.ClientPub">Translate Topic</mat-checkbox> -->
           <mat-checkbox class="example-margin" color="primary" [(ngModel)]="mccConfig.ClientPub.ConnectRetry" *ngIf="mccConfig?.ClientPub">Connection Retry</mat-checkbox>
           <mat-checkbox class="example-margin" color="primary" [(ngModel)]="mccConfig.ClientPub.AutoConnect" *ngIf="mccConfig?.ClientPub">Auto Connect</mat-checkbox>
           <mat-checkbox class="example-margin" color="primary" [(ngModel)]="mccConfig.ClientPub.OrderMaters" *ngIf="mccConfig?.ClientPub">Order Maters</mat-checkbox>
@@ -159,7 +163,7 @@
             <textarea matInput placeholder="" [(ngModel)]="mccConfig.ClientPub.PrivateKey"></textarea>
           </mat-form-field>
         </div>
-        <div class="Logs" *ngIf="mccConfig?.ClientPub?.TranslateTopic">
+        <!-- <div class="Logs" *ngIf="mccConfig?.ClientPub?.TranslateTopic">
           <div class="inner-section">
             <h2 class="TopSub">Topics to Publish to</h2>
             <div class="example-button-row">
@@ -177,7 +181,7 @@
               <input matInput placeholder="Node Name" [(ngModel)]="mccConfig.TopicsPub.Topic[i]">
             </mat-form-field>
           </div> 
-        </div>
+        </div> -->
     </div>
   </mat-tab>
   <mat-tab label="Log Options">

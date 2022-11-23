@@ -2,26 +2,22 @@ package main
 
 import (
 	"mqtt-pubsub/handlers"
-	mqttpubsub "mqtt-pubsub/modules/mqtt-pubsub"
-	"os"
-	"os/signal"
 	"path"
 	"path/filepath"
 	"runtime/debug"
-	"syscall"
 
+	//"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 
-	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
-
 	debug.SetGCPercent(10)
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.Use(CORSMiddleware())
+
+	//pprof.Register(r)
 
 	r.NoRoute(func(c *gin.Context) {
 		dir, file := path.Split(c.Request.RequestURI)
@@ -35,18 +31,14 @@ func main() {
 
 	r.GET("/mqtt-pubsub/config", handlers.GetConfigHandler)
 	r.POST("/mqtt-pubsub/config", handlers.SetConfigHandler)
+	r.GET("/mqtt-pubsub/start", handlers.StartServiceHandler)
+	r.GET("/mqtt-pubsub/stop", handlers.StopServiceHandler)
+	r.GET("/mqtt-pubsub/status", handlers.GetServiceStatusHandler)
 
-	go mqttpubsub.Run()
-
-	go func() {
-		err := r.Run(":9091")
-		if err != nil {
-			panic(err)
-		}
-	}()
-
-	<-sig
-	mqttpubsub.CloseConnections()
+	err := r.Run(":9091")
+	if err != nil {
+		panic(err)
+	}
 }
 
 func CORSMiddleware() gin.HandlerFunc {
